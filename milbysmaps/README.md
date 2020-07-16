@@ -13,3 +13,17 @@ _where_
     - `sub/sub` works as intended to generate directories _beneath_ the subdirectory desired
 
 The `target` specified in the parameters will be created if it does not exist (I think).
+
+# Results
+C:\maps\Mike Milby\Brazenthrone
+├───1 - The Old Palace (Ruins)
+│   ├───1-INCH-GRID
+│   ├───PRINT
+│   └───VTT
+│       └───Stacked
+├───2 - The Old Quarter (Ruins)
+│   ├───1-INCH-GRID
+│   ├───PRINT
+│   └───VTT
+│       ├───Stacked
+..._etc_...
