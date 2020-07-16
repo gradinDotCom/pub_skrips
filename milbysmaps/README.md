@@ -1,5 +1,5 @@
-#Milby's Maps
-[https://www.patreon.com/milbysmaps](Milby's Patreon)
+# Milby's Maps
+[Milby's Patreon](https://www.patreon.com/milbysmaps)
 
 This is a simple PowerShell script to generate an organized directory structure for fans of Mike Milby's fantastic illustrations. The example provided covers a large effort, "Brazenthrone" which initially spawned my interest in creating this (not to mention the other Patreon collections I have that need desparate organization too!).
 
