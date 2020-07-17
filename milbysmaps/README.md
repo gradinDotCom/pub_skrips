@@ -1,9 +1,9 @@
 # Milby's Maps
 [Milby's Patreon](https://www.patreon.com/milbysmaps)
 
-This is a simple PowerShell script to generate an organized directory structure for fans of Mike Milby's fantastic illustrations. The example provided covers a large effort, "Brazenthrone" which initially spawned my interest in creating this (not to mention the other Patreon collections I have that need desparate organization too!).
+This is a simple PowerShell script to generate an organized directory structure for fans of Matt Milby's fantastic illustrations. The example provided covers a large effort, "Brazenthrone" which initially spawned my interest in creating this (not to mention the other Patreon collections I have that need desparate organization too!).
 
-`New-DirectoryStructure.ps1 -filename .\brazenthrone_dir.txt -target "C:\maps\Mike Milby\Brazenthrone"`
+`New-DirectoryStructure.ps1 -filename .\brazenthrone_dir.txt -target "C:\maps\Matt Milby\Brazenthrone"`
 
 _where_
 
@@ -15,7 +15,7 @@ _where_
 The `target` specified in the parameters will be created if it does not exist (I think).
 
 # Results
-C:\maps\Mike Milby\Brazenthrone
+C:\maps\Matt Milby\Brazenthrone
 ```
 1 - The Old Palace (Ruins)
   1-INCH-GRID
