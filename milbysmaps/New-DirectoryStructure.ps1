@@ -10,7 +10,7 @@ Param (
     $target="./"
 )
 
-New-Item -ItemType Directory -Path $target -ErrorAction SilentlyContinue
+New-Item -Path $target -ItemType Directory -ErrorAction SilentlyContinue
 
 foreach($line in (Get-Content $filename)) {
     $DirCount = $line.Length
@@ -28,4 +28,4 @@ foreach($line in (Get-Content $filename)) {
     }
 }
 
-Write-Output "$($DirCount) directory(s) created at $((Get-Item $target).FullName)!"
+Write-Output "\n$($DirCount) directory(s) created at $((Get-Item $target).FullName)!"
