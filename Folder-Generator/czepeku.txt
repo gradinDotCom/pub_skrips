@@ -1,8 +1,8 @@
 sub:Gridded,Ungridded
+Shards of the Storm
 Abandoned Mine
 Adventurer's Guildhall
 Airship
-Albino Werecrocodiles
 Ancient Battlefield
 Antlion Canyon
 Arkus Assets
@@ -18,9 +18,11 @@ Cavern of the Venom Queen
 City Rooftop Chase
 City Streets
 Colosseum
+Colossus Port
 Coral Throne
 Couatl Temple
 Couatl Temple Dungeon
+Desert Canyon
 Dragon Flight
 Dragon Props
 Drakescale Peak
@@ -30,11 +32,13 @@ ElementalTokens
 Festerwood
 Fey Village Rewards
 Floating Sky Castle
+Forest Shrine Festival
 Giant Kitchen
 Goblin Bridge
 Hearth
 Hell's Tax Office
 Hydra Lair
+Impact Site
 Island Fort
 Japanese Bathhouse
 Lair of the Beholder
@@ -52,6 +56,7 @@ Monster Festival
 Mountain Monastery
 Mountain Top Altar
 Ogre Queen Maps
+Open Ocean
 Pharaoh's Tomb
 Plague Hospital
 Port Tavern
@@ -68,7 +73,8 @@ The Great Library
 The Lies of Lolth
 The Stranded Casino
 Thieves Guild
-Trouble in Knotside
+Train Station Concourse
+Train Station Platform
 Vampire Mansion
 Warforged Factroy
 Windmill Farm
