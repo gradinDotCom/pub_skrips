@@ -14,7 +14,6 @@ param (
     $ScanPath
 )
 
-$5DollarPatronMaster = "https://www.patreon.com/posts/master-master-27816327"
 $ContactSheetDir = "_Index"
 $dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -Recurse
 
@@ -28,7 +27,7 @@ foreach ($dir in $dirs) {
         $img = Get-ChildItem -Path $dir -Recurse | Sort-Object Name -Desc | Select-Object -Last 1
     }
     Write-Information "`n`n[Indexing and Resizing] $($dir.FullName)"
-    Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $Path -ChildPath $ContactSheetDir)
+    Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
 }
 }
 
@@ -87,7 +86,14 @@ Function Resize-Image() {
                 }
                 $out = Get-Item (Resolve-Path $OutputPath)
                 $ImgRoot = $file.Directory
-                $OutputPath = (Join-Path -Path $out.FullName -ChildPath ($ImgRoot.Parent.Name + $file.Extension))
+                # $OutputPath = (Join-Path -Path $out.FullName -ChildPath ($ImgRoot.Parent.Name + $file.Extension))
+                $startDir = Get-Item (Resolve-Path $ScanPath)
+                if ($ImgRoot.Parent.Parent.Name -eq $startDir.Name) {
+                    $indexname = $ImgRoot.Parent.Name + $file.Extension
+                } else {
+                    $indexname = $ImgRoot.Parent.Parent.Name + "-" + $ImgRoot.Parent.Name + $file.Extension
+                }
+                $OutputPath = (Join-Path -Path $out.FullName -ChildPath $indexname)
             }
             
             $OldImage = New-Object -TypeName System.Drawing.Bitmap -ArgumentList $Path
@@ -141,4 +147,4 @@ Function Resize-Image() {
     }
 }
 
-New-ContactSheet -Path $ScanPath
+New-ContactSheet -ScanPath $ScanPath
