@@ -1,4 +1,3 @@
-# change $Path to a ZIP file that exists on your system!
 [CmdletBinding()]
 param (
     [Parameter()]
