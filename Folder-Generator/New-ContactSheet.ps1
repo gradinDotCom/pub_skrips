@@ -81,7 +81,7 @@ Function Resize-Image() {
             if($OutputPath -eq "") {
                 $OutputPath = $Path.Substring(0,$Dot) + "_" + $NameModifier + $Path.Substring($Dot,$Path.Length - $Dot)
             } else {
-                $file = Get-ChildItem $Image
+                $file = Get-ChildItem -LiteralPath ${Image}
                 if (Resolve-Path -ErrorAction Silent $OutputPath) {
                     
                 } else {
