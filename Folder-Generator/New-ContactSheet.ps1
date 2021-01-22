@@ -20,14 +20,15 @@ $dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -R
 Write-Output "Processing $($dirs.Count) folders"
 
 foreach ($dir in $dirs) {
-    If ($img = (Get-ChildItem -Path $dir -Filter *Original_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-    } elseif ($img = (Get-ChildItem -Path $dir -Filter *Original.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-    } elseif ($img = (Get-ChildItem -Path $dir -Filter *_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+    If ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *Original_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+    } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *Original.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+    } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
     } else {
-        $img = Get-ChildItem -Path $dir -Recurse | Sort-Object Name -Desc | Select-Object -Last 1
+        $img = Get-ChildItem -LiteralPath ${dir} -Recurse | Sort-Object Name -Desc | Select-Object -Last 1
     }
     Write-Information "`n`n[Indexing and Resizing] $($dir.FullName)"
-    Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+    # Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+    Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
 }
 }
 
@@ -40,11 +41,13 @@ Function Resize-Image() {
     )]
     Param (
         [Parameter(Mandatory=$True)]
-        [ValidateScript({
-            $_ | ForEach-Object {
-                Test-Path $_
-            }
-        })][String[]]$ImagePath,
+        # [ValidateScript({
+        #     $_ | ForEach-Object {
+        #         Test-Path -LiteralPath $_
+        #     }
+        # })]
+        [System.IO.FileInfo[]]$ImagePath,
+        # [String[]]$ImagePath,
         [Parameter(Mandatory=$False)][Switch]$MaintainRatio,
         [Parameter(Mandatory=$False, ParameterSetName="Absolute")][Int]$Height,
         [Parameter(Mandatory=$False, ParameterSetName="Absolute")][Int]$Width,
@@ -71,7 +74,7 @@ Function Resize-Image() {
     }
     Process {
         ForEach ($Image in $ImagePath) {
-            $Path = (Resolve-Path $Image).Path
+            $Path = (Resolve-Path -LiteralPath ${Image}).Path
             $Dot = $Path.LastIndexOf(".")
 
             #Add name modifier (OriginalName_{$NameModifier}.jpg)
