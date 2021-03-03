@@ -14,15 +14,15 @@ module "myip" {
 }
 
 variable "nsg" {
-
+  description = "The Network Security Group you will modify"
 }
 
 variable "resource_group_name" {
-
+  description = "The Resource Group Name where the NSG lives"
 }
 
 variable "name" {
-
+  description = "A value to finish this phrase: 'allow SSH from <blank>'"
 }
 
 resource "azurerm_network_security_rule" "this" {

@@ -1,0 +1,4 @@
+/FreeJiTA/terraform.tfstate
+/FreeJiTA/terraform.tfstate.backup
+/FreeJiTA/.terraform.lock.hcl
+/FreeJiTA/.terraform/*
