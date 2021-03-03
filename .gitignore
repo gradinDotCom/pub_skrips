@@ -1,7 +1,7 @@
-/FreeJiTA/terraform.tfstate
-/FreeJiTA/terraform.tfstate.backup
-/FreeJiTA/.terraform.lock.hcl
-/FreeJiTA/.terraform/*
+# /FreeJiTA/terraform.tfstate
+# /FreeJiTA/terraform.tfstate.backup
+# /FreeJiTA/.terraform.lock.hcl
+# /FreeJiTA/.terraform/*
 
 # Local .terraform directories
 **/.terraform/*
@@ -9,6 +9,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+*.lock.*
 
 # Crash log files
 crash.log
