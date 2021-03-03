@@ -1,7 +1,6 @@
 # Expecting environment variables to set Subscription and Tenant IDs for Azure
 
 # Related to the NSG target we're modifying
-location            = "East US 2"
 nsg                 = "nsg-vm-l-fvtt-01"
 resource_group_name = "FoundryVTT"
 
