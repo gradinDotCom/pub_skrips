@@ -35,7 +35,7 @@ foreach ($file in $Path) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     # open ZIP archive for reading
-    $zip = [System.IO.Compression.ZipFile]::OpenRead($file)
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($file.FullName)
 
     # find all files in ZIP that match the filter (i.e. file extension)
     $zip.Entries | 
