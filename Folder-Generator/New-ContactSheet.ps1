@@ -74,14 +74,14 @@ Function Resize-Image() {
     }
     Process {
         ForEach ($Image in $ImagePath) {
-            $Path = (Resolve-Path -LiteralPath ${Image}).Path
+            $Path = (Resolve-Path -LiteralPath $Image.FullName).Path
             $Dot = $Path.LastIndexOf(".")
 
             #Add name modifier (OriginalName_{$NameModifier}.jpg)
             if($OutputPath -eq "") {
                 $OutputPath = $Path.Substring(0,$Dot) + "_" + $NameModifier + $Path.Substring($Dot,$Path.Length - $Dot)
             } else {
-                $file = Get-ChildItem -LiteralPath ${Image}
+                $file = Get-ChildItem -LiteralPath $Image.FullName
                 if (Resolve-Path -ErrorAction Silent $OutputPath) {
                     
                 } else {
