@@ -62,4 +62,4 @@ This follows on the heels of 'unzip-files' above and simply adds a "contact shee
 
 `New-ContactSheet.ps1 -ScanPath "c:\Downloads\czepeku"`
 
-![Contact Sheet](https://showntell.z20.web.core.windows.net/images/sheet.png)
+![Contact Sheet](https://showntell.z20.web.core.windows.net/images/sheet.png?)
