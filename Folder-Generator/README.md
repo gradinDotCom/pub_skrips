@@ -58,7 +58,7 @@ This will take several minutes to process a directory of say, 100 zips. As menti
 ![Target Directory](https://showntell.z20.web.core.windows.net/images/tgt.png)
 
 ## New-ContactSheet
-This follows on the heels of 'unzip-files' above and simply adds a "contact sheet" as an index to understand what you have. It will create (by default) a new folder called "_Index" in your scanned directory to place thumbnails of what I *think* are representative of the directories I find.
+This follows on the heels of 'unzip-files' above and simply adds a "contact sheet" as an index to understand what you have. It will create (by default) a new folder called "\_Index" in your scanned directory to place thumbnails of what I *think* are representative of the directories I find. The filtering logic prioritizes names like "Original Day" or some variation on that theme. It also constructs a name which represents the folder the image comes from, and the child folder if applicable (e.g. Ages of the Vale Pt.1 [27x39]-03 Tavern.jpg comes from _Ages of the Vale Pt.1\03 Tavern\GL\_Tavern\_Indoors\_NewBeginnings\_Day.jpg_).
 
 `New-ContactSheet.ps1 -ScanPath "c:\Downloads\czepeku"`
 
