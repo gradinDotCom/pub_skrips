@@ -7,29 +7,32 @@ param (
 
 Add-Type -AssemblyName 'System.Drawing'
 Function New-ContactSheet {
-[CmdletBinding()]
-param (
-    [Parameter(Mandatory=$true, Position=1)]
-    [String]
-    $ScanPath
-)
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true, Position=1)]
+        [String]
+        $ScanPath
+    )
 
-$ContactSheetDir = "_Index"
-$dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -Recurse
+    $ContactSheetDir = "_Index"
+    # $dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -Recurse
+    $dirs = Get-ChildItem -Path $ScanPath -Exclude $ContactSheetDir -Directory -Recurse
 
-Write-Output "Processing $($dirs.Count) folders"
+    Write-Output "Processing $($dirs.Count) folders"
 
-foreach ($dir in $dirs) {
-    If ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *Original_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-    } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *Original.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-    } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter *_Day.jpg -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-    } else {
-        $img = Get-ChildItem -LiteralPath ${dir} -Recurse | Sort-Object Name -Desc | Select-Object -Last 1
+    foreach ($dir in $dirs) {
+        If ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Original*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Day*_Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+        } else { $img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*.* -Include *.jpg,*.png -Recurse | Sort-Object Name -Desc | Select-Object -Last 1) }
+        # Missing "campaign" maps and some other non-map content. What to do with that?
+        Write-Information "`n`n[Indexing and Resizing] $($dir.FullName)"
+        # Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+        if ($null -ne $img -and (Resolve-Path -LiteralPath $img.FullName -ErrorAction Silent)) {
+            Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+        }
     }
-    Write-Information "`n`n[Indexing and Resizing] $($dir.FullName)"
-    # Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
-    Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
-}
 }
 
 Function Resize-Image() {
@@ -99,55 +102,63 @@ Function Resize-Image() {
                 $OutputPath = (Join-Path -Path $out.FullName -ChildPath $indexname)
             }
             
-            $OldImage = New-Object -TypeName System.Drawing.Bitmap -ArgumentList $Path
-            # Grab these for use in calculations below. 
-            $OldHeight = $OldImage.Height
-            $OldWidth = $OldImage.Width
- 
-            If ($MaintainRatio) {
+            if ($null -ne $OutputPath -and !(Resolve-Path -LiteralPath $OutputPath -ErrorAction Silent)) {
+                $OldImage = New-Object -TypeName System.Drawing.Bitmap -ArgumentList $Path
+                # Grab these for use in calculations below. 
                 $OldHeight = $OldImage.Height
                 $OldWidth = $OldImage.Width
-                If ($Height) {
-                    $Width = $OldWidth / $OldHeight * $Height
-                }
-                If ($Width) {
-                    $Height = $OldHeight / $OldWidth * $Width
-                }
-                If ($ShortSide) {
-                    if ($Height -lt $Width) {
-                        $Height = $ShortSide
+    
+                If ($MaintainRatio) {
+                    $OldHeight = $OldImage.Height
+                    $OldWidth = $OldImage.Width
+                    If ($Height) {
                         $Width = $OldWidth / $OldHeight * $Height
-                    } else {
-                        $Width = $ShortSide
+                    }
+                    If ($Width) {
                         $Height = $OldHeight / $OldWidth * $Width
                     }
+                    If ($ShortSide) {
+                        if ($Height -lt $Width) {
+                            $Height = $ShortSide
+                            $Width = $OldWidth / $OldHeight * $Height
+                        } else {
+                            $Width = $ShortSide
+                            $Height = $OldHeight / $OldWidth * $Width
+                        }
+                    }
                 }
-            }
- 
-            If ($Percentage) {
-                $Product = ($Percentage / 100)
-                $Height = $OldHeight * $Product
-                $Width = $OldWidth * $Product
-            }
+    
+                If ($Percentage) {
+                    $Product = ($Percentage / 100)
+                    $Height = $OldHeight * $Product
+                    $Width = $OldWidth * $Product
+                }
 
-            $Bitmap = New-Object -TypeName System.Drawing.Bitmap -ArgumentList $Width, $Height
-            $NewImage = [System.Drawing.Graphics]::FromImage($Bitmap)
-             
-            #Retrieving the best quality possible
-            $NewImage.SmoothingMode = $SmoothingMode
-            $NewImage.InterpolationMode = $InterpolationMode
-            $NewImage.PixelOffsetMode = $PixelOffsetMode
-            $NewImage.DrawImage($OldImage, $(New-Object -TypeName System.Drawing.Rectangle -ArgumentList 0, 0, $Width, $Height))
+                $Bitmap = New-Object -TypeName System.Drawing.Bitmap -ArgumentList $Width, $Height
+                $NewImage = [System.Drawing.Graphics]::FromImage($Bitmap)
+                
+                #Retrieving the best quality possible
+                $NewImage.SmoothingMode = $SmoothingMode
+                $NewImage.InterpolationMode = $InterpolationMode
+                $NewImage.PixelOffsetMode = $PixelOffsetMode
+                $NewImage.DrawImage($OldImage, $(New-Object -TypeName System.Drawing.Rectangle -ArgumentList 0, 0, $Width, $Height))
 
-            If ($PSCmdlet.ShouldProcess("Resized image based on $Path", "save to $OutputPath")) {
-                $Bitmap.Save($OutputPath)
+                If ($PSCmdlet.ShouldProcess("Resized image based on $Path", "save to $OutputPath")) {
+                    if ($null -ne $OutputPath -and !(Resolve-Path -ErrorAction Silent -LiteralPath $OutputPath)) {
+                        $Bitmap.Save($OutputPath)
+                        $global:count++
+                    }
+                }
+                
+                $Bitmap.Dispose()
+                $NewImage.Dispose()
+                $OldImage.Dispose()
             }
-            
-            $Bitmap.Dispose()
-            $NewImage.Dispose()
-            $OldImage.Dispose()
         }
     }
+    End {  }
 }
 
+$global:count = 0
 New-ContactSheet -ScanPath $ScanPath
+Write-Host "$($global:count) new images processed!"
