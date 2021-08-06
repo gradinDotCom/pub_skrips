@@ -36,14 +36,18 @@ C:\maps\Matt Milby\Brazenthrone
 
 ..._etc_...
 
+---
+
 ## Unzip-Files
 
-Poorly named, but valuable script to unzip 'Cze and Peku' archives into a very manageable directory repository. It takes a source directory or filename, reads the contents, and places the cleaned output into a new target. This is a really touchy process and error prone as anyone who has tried to treat filename and directory hierarchies as a database can attest. That said, here are the known issues:
+Poorly named, but valuable script to unzip '[Cze and Peku](https://www.patreon.com/czepeku/posts?utm_medium=social&utm_source=github&utm_campaign=creatorshare)' archives into a very manageable directory repository. It takes a source directory or filename, reads the contents, and places the cleaned output into a new target. This is a really touchy process and error prone as anyone who has tried to treat filename and directory hierarchies as a database can attest. That said, here are the known issues:
 
 - Beach Kraken has no subdirectories and cannot be processed
 - Chaos at the Coral Court Adventure is filled with ZIPs and cannot be processed
 - Colossus Port is missing a space (Colossus Port \[70x108\]-...) and would need to renamed to get picked up, but...
 - Colossus Port is missing any Gridded/Gridless subdirectories and (probably) cannot be processed.
+
+---
 
 ### Clean means
 
@@ -57,8 +61,13 @@ This will take several minutes to process a directory of say, 100 zips. As menti
 ![Source Archives](https://showntell.z20.web.core.windows.net/images/src.png)
 ![Target Directory](https://showntell.z20.web.core.windows.net/images/tgt.png)
 
+---
+
 ## New-ContactSheet
-This follows on the heels of 'unzip-files' above and simply adds a "contact sheet" as an index to understand what you have. It will create (by default) a new folder called "\_Index" in your scanned directory to place thumbnails of what I *think* are representative of the directories I find. The filtering logic prioritizes names like "Original Day" or some variation on that theme. It also constructs a name which represents the folder the image comes from, and the child folder if applicable (e.g. Ages of the Vale Pt.1 [27x39]-03 Tavern.jpg comes from _Ages of the Vale Pt.1\03 Tavern\GL\_Tavern\_Indoors\_NewBeginnings\_Day.jpg_).
+
+> For contributors: The intention of this index is to represent the "Original, Day" of each map because it should be a common base that all Patreons have and makes for a clear representative thumbnail. While there may be layers or variations on each map, I think there should be a thumbnail for each **unique** map.
+
+This follows on the heels of '[unzip-files](https://github.com/gradinDotCom/pub_skrips/tree/master/Folder-Generator#unzip-files)' above and simply adds a "contact sheet" as an index to understand what you have. It will create (by default) a new folder called "\_Index" in your scanned directory to place thumbnails of what I *think* are representative of the directories I find. The filtering logic prioritizes names like "Original Day" or some variation on that theme. It also constructs a name which represents the folder the image comes from, and the child folder if applicable (e.g. Ages of the Vale Pt.1 [27x39]-03 Tavern.jpg comes from _Ages of the Vale Pt.1\03 Tavern\GL\_Tavern\_Indoors\_NewBeginnings\_Day.jpg_).
 
 `New-ContactSheet.ps1 -ScanPath "c:\Downloads\czepeku"`
 
