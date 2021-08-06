@@ -67,6 +67,12 @@ This will take several minutes to process a directory of say, 100 zips. As menti
 
 > For contributors: The intention of this index is to represent the "Original, Day" of each map because it should be a common base that all Patreons have and makes for a clear representative thumbnail. While there may be layers or variations on each map, I think there should be a thumbnail for each **unique** map.
 
+Known Issues:
+
+- Missing "Campaign" maps
+- Missing additional content (e.g. music, items, monsters, etc.)
+- Finicky around directory design and naming conventions - it is what it is
+
 This follows on the heels of '[unzip-files](https://github.com/gradinDotCom/pub_skrips/tree/master/Folder-Generator#unzip-files)' above and simply adds a "contact sheet" as an index to understand what you have. It will create (by default) a new folder called "\_Index" in your scanned directory to place thumbnails of what I *think* are representative of the directories I find. The filtering logic prioritizes names like "Original Day" or some variation on that theme. It also constructs a name which represents the folder the image comes from, and the child folder if applicable (e.g. Ages of the Vale Pt.1 [27x39]-03 Tavern.jpg comes from _Ages of the Vale Pt.1\03 Tavern\GL\_Tavern\_Indoors\_NewBeginnings\_Day.jpg_).
 
 `New-ContactSheet.ps1 -ScanPath "c:\Downloads\czepeku"`
