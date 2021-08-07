@@ -6,6 +6,8 @@ param (
 )
 
 Add-Type -AssemblyName 'System.Drawing'
+Add-Type -AssemblyName 'System.Web'
+
 Function New-ContactSheet {
     [CmdletBinding()]
     param (
@@ -15,24 +17,48 @@ Function New-ContactSheet {
     )
 
     $ContactSheetDir = "_Index"
+    $ContactSheetTitle = "Cze and Peku"
     # $dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -Recurse
-    $dirs = Get-ChildItem -Path $ScanPath -Exclude $ContactSheetDir -Directory -Recurse
+    $dirs = Get-ChildItem -Path $ScanPath -Exclude $ContactSheetDir -Directory
+    $img  = Get-ChildItem -Path $ScanPath -Include *.jpg,*.png -File -Recurse
+    $html = @"
+    <html>
+    <head><title>$($ContactSheetTitle)</title></head>
+    <body>
+"@
+    $html += "<h1>$($ContactSheetTitle) Map Index</h1>`n"
+    $html += "<p class='subtext'>Found $($dirs.Count) folders containing $($img.Count) images!</p>`n"
+    $html += "<ul class='index'>`n"
 
-    Write-Output "Processing $($dirs.Count) folders"
+    Write-Output "Processing $($dirs.Count) folders with $($img.Count) images!"
 
     foreach ($dir in $dirs) {
-        If ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Original*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Day*_Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-        } elseif ($img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-        } else { $img = (Get-ChildItem -LiteralPath ${dir} -Filter GL_*.* -Include *.jpg,*.png -Recurse | Sort-Object Name -Desc | Select-Object -Last 1) }
-        # Missing "campaign" maps and some other non-map content. What to do with that?
-        Write-Information "`n`n[Indexing and Resizing] $($dir.FullName)"
-        # Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img.FullName -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
-        if ($null -ne $img -and (Resolve-Path -LiteralPath $img.FullName -ErrorAction Silent)) {
-            Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+        $html += "`t<li class=`"folder`"><a href=`"../$($dir.Name)`">$($dir.Name)</a>`n`t`t<ul>`n"
+        $subdirs = Get-ChildItem -LiteralPath $dir -Directory
+        foreach ($subdir in $subdirs) {        
+            If ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Original*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Day*_Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } else { $img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*.* -Include *.jpg,*.png -Recurse | Sort-Object Name -Desc | Select-Object -Last 1) }
+            # Missing "campaign" maps and some other non-map content. What to do with that?
+            
+            Write-Information "`n`n[Indexing and Resizing] $($subdir.FullName)"
+
+            if ($null -ne $img) {
+                $subpath = $img.Directory.FullName.Substring($ScanPath.Length+1)
+                [Array]$mapDirs = $subpath.Split("\") -ne "Gridless" -ne "Gridded" -ne "Ungridded"
+                $rszImg = Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
+                $html += "`t`t`t<li class=`"folder`">$($mapDirs[1])</li>`n"
+                $html += "`t`t`t<li><img src=`"$($rszImg)`" /></li>`n"
+            }
         }
+        $html += "`t</li>`n`t`t</ul>`n"
     }
+
+    $html += "</ul>`n"
+    $html += "</body></html>"
+    $html | Out-File -FilePath $ScanPath\$ContactSheetDir\index.html -Force
 }
 
 Function Resize-Image() {
@@ -156,7 +182,7 @@ Function Resize-Image() {
             }
         }
     }
-    End {  }
+    End { return $indexname }
 }
 
 $global:count = 0
