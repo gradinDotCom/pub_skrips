@@ -46,7 +46,7 @@ foreach ($file in $Path) {
         Write-Information "#################"
         Write-Information "## $($_.FullName)"
         Write-Information "#################"
-        if ($null = $_.FullName -match "(.+) - .+") {
+        if ($null = $_.FullName -match "(.+[]])") {
             
         } 
         # else {
