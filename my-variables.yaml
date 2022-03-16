@@ -1,0 +1,94 @@
+version: 1
+platform: team
+boundary: github
+name: docker
+description: Docker server
+maintainers:
+  - infrastructure-admins
+project_type: virtual_hardware
+tech_type: docker
+security:
+  context: standard
+metadata:
+  business_unit: responsible
+  tier: 2
+virtual_machines:
+  - name: docker-internal
+    tech_type: docker
+    type: Standard_F32s_v2
+    count: 10
+    location: westeurope
+    environment: 
+      - production
+      - dev
+    image:
+      publisher: OpenLogic
+      offer: CentOS
+      sku: centos79
+      version: 7.5
+      os: linux
+    networks:
+      - name: dmzbw
+        loadbalancers:
+          - internal-ilb
+          - external-ilb
+    disks:
+      - size: 512
+        type: standard
+    loadbalancers:
+      - name: internal-ilb
+        type: internal
+        network:
+          name: dmzbw
+        rules:
+          - protocol: tcp
+            frontend_port: 443
+            backend_port: 443
+
+      - name: external-ilb
+        type: external
+        network:
+          name: dmzbw
+        rules:
+          - protocol: tcp
+            frontend_port: 9443
+            backend_port: 9443
+  - name: docker-test
+    tech_type: docker
+    type: Standard_D4s_v2
+    count: 4
+    location: westeurope
+    environment: 
+      - dev
+    image:
+      publisher: OpenLogic
+      offer: CentOS
+      sku: centos79
+      version: 7.5
+      os: linux
+    networks:
+      - name: dmzbw
+        loadbalancers:
+          - internal-ilb
+          - external-ilb
+    disks:
+      - size: 256
+        type: standard
+    loadbalancers:
+      - name: internal-ilb
+        type: internal
+        network:
+          name: dmzbw
+        rules:
+          - protocol: tcp
+            frontend_port: 443
+            backend_port: 443
+
+      - name: external-ilb
+        type: external
+        network:
+          name: dmzbw
+        rules:
+          - protocol: tcp
+            frontend_port: 9443
+            backend_port: 9443
