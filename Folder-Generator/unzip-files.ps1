@@ -69,7 +69,9 @@ foreach ($file in $Path) {
             } elseif ($split_Filename[1..($split_Filename.Count-1)] -like "*.*") {
                 $appndName = [System.IO.Path]::Combine([string[]]@($OutPath,$Matches[1]; $split_Filename[1..($split_Filename.Count-1)]))
                 Write-Output $appndName
-                [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, "$appndName", $true)
+                # TODO: Should we write more information to make better decisions?
+                try { [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, "$appndName", $false) }
+                catch { Write-Warning "$($appndName) exists..." }
             }
         }
     }

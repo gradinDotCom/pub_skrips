@@ -19,44 +19,83 @@ Function New-ContactSheet {
     $ContactSheetDir = "_Index"
     $ContactSheetTitle = "Cze and Peku"
     # $dirs = Get-ChildItem -Path $ScanPath -Include Ungridded, Gridless -Directory -Recurse
-    $dirs = Get-ChildItem -Path $ScanPath -Exclude $ContactSheetDir -Directory
-    $img  = Get-ChildItem -Path $ScanPath -Include *.jpg,*.png -File -Recurse
+    $dirs = Get-ChildItem -Path $ScanPath -Exclude _* -Directory
+    # $img  = Get-ChildItem -Path $ScanPath -Include *.jpg,*.png -File -Recurse
     $html = @"
-    <html>
-    <head><title>$($ContactSheetTitle)</title></head>
+    <!doctype html>
+    <html lang="en">
+        <head>
+            <title>$($ContactSheetTitle) Maps</title>
+            <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	        <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+	        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+            <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet" type="text/css">
+	        <link href="bootstrap.min.css" rel="stylesheet" type="text/css">
+        </head>
     <body>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/jquery.nanogallery2.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <div ID="ngy2p" data-nanogallery2='{
+            "itemsBaseURL": "file://$ScanPath/$ContactSheetDir/",
+            "thumbnailWidth": "240",
+            "thumbnailHeight": "auto",
+            "thumbnailLabel": {
+              "position": "overImageOnBottom",
+              "titleMultiLine": true
+            },
+            "thumbnailHoverEffect2": "imageScale150",
+            "thumbnailAlignment": "center",
+            "gallerySorting": "titleasc",
+            "galleryL1FilterTags": "description",
+            "galleryFilterTagsMode": "multiple",
+            "galleryFilterTags": "false",
+            "galleryTheme": {
+                "thumbnail": {
+                    "background": "#000"
+                }
+            }
+          }'>
 "@
-    $html += "<h1>$($ContactSheetTitle) Map Index</h1>`n"
-    $html += "<p class='subtext'>Found $($dirs.Count) folders containing $($img.Count) images!</p>`n"
-    $html += "<ul class='index'>`n"
+    $html += "`t`t<h1>$($ContactSheetTitle) Maps</h1>`n"
+    # $html += "`t`t<p class='subtext'>Found $($dirs.Count) folders containing $($img.Count) images!</p>`n"
 
-    Write-Output "Processing $($dirs.Count) folders with $($img.Count) images!"
+    Write-Output "Processing $($dirs.Count) folders."
 
     foreach ($dir in $dirs) {
-        $html += "`t<li class=`"folder`"><a href=`"../$($dir.Name)`">$($dir.Name)</a>`n`t`t<ul>`n"
-        $subdirs = Get-ChildItem -LiteralPath $dir -Directory
-        foreach ($subdir in $subdirs) {        
-            If ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Original*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Day*_Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-            } elseif ($img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
-            } else { $img = (Get-ChildItem -LiteralPath $subdir.FullName -Filter GL_*.* -Include *.jpg,*.png -Recurse | Sort-Object Name -Desc | Select-Object -Last 1) }
+        $rando = '{0:X}' -f (Get-Random -Maximum 65535)
+        
+        # $subdirs = Get-ChildItem -LiteralPath $dir -Directory
+        # foreach ($subdir in $subdirs) {        
+            If ($img = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*Original*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*Day*_Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*Original.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } elseif ($img = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*_Day.* -Recurse | Sort-Object Name -Desc | Select-Object -Last 1)) {
+            } else { $img = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*.* -Include *.jpg,*.png -Recurse | Sort-Object Name -Desc | Select-Object -Last 1) }
             # Missing "campaign" maps and some other non-map content. What to do with that?
+
+            $imgs = (Get-ChildItem -LiteralPath $dir.FullName -Filter GL_*.* -Include *.jpg,*.png -Recurse)
             
-            Write-Information "`n`n[Indexing and Resizing] $($subdir.FullName)"
+            Write-Information "`n`n[Indexing and Resizing] $($dir.Name)"
+            Write-Information "`nFound $($imgs.Length) images..."
 
             if ($null -ne $img) {
-                $subpath = $img.Directory.FullName.Substring($ScanPath.Length+1)
-                [Array]$mapDirs = $subpath.Split("\") -ne "Gridless" -ne "Gridded" -ne "Ungridded"
-                $rszImg = Resize-Image -MaintainRatio -ShortSide 240 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir)
-                $html += "`t`t`t<li class=`"folder`">$($mapDirs[1])</li>`n"
-                $html += "`t`t`t<li><img src=`"$($rszImg)`" /></li>`n"
+                $rszImg = Resize-Image -MaintainRatio -ShortSide 400 -ImagePath $img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir\albums)
+                $html += "`t`t<a href=`"`" data-ngid=`"$($rando)`" data-ngkind=`"album`" data-ngthumb=`"$(Join-Path -Path $ScanPath -ChildPath $ContactSheetDir\albums\$rszImg)`">$($dir.Name)</a>`n"
+
+                foreach ($gal_img in $imgs) {
+                    Write-Information "`n`tProcessing $($gal_img)"
+                    $rszGalImg = Resize-Image -MaintainRatio -ShortSide 400 -ImagePath $gal_img -NameModifier thumb -InterpolationMode Bilinear -SmoothingMode HighSpeed -PixelOffsetMode HighSpeed -OutputPath (Join-Path -Path $ScanPath -ChildPath $ContactSheetDir\images)
+                    Write-Information "`n`t$($rszGalImg) resized"
+                    $html += "`t`t<a href=`"$($gal_img.FullName)`" data-ngalbumid=`"$($rando)`" data-ngthumb=`"$(Join-Path -Path $ScanPath -ChildPath $ContactSheetDir\images\$rszGalImg)`" data-ngdesc=`"#test`">$($gal_img.Name.Substring(0,$gal_img.Name.Length-4))</a>`n"
+                }
+
             }
-        }
-        $html += "`t</li>`n`t`t</ul>`n"
+        # }
     }
 
-    $html += "</ul>`n"
+    $html += "</div>`n"
     $html += "</body></html>"
     $html | Out-File -FilePath $ScanPath\$ContactSheetDir\index.html -Force
 }
@@ -110,22 +149,23 @@ Function Resize-Image() {
             if($OutputPath -eq "") {
                 $OutputPath = $Path.Substring(0,$Dot) + "_" + $NameModifier + $Path.Substring($Dot,$Path.Length - $Dot)
             } else {
-                $file = Get-ChildItem -LiteralPath $Image.FullName
+                # $file = Get-ChildItem -LiteralPath $Image.FullName
                 if (Resolve-Path -ErrorAction Silent $OutputPath) {
                     
                 } else {
                     New-Item $OutputPath -ItemType "Directory"
                 }
                 $out = Get-Item (Resolve-Path $OutputPath)
-                $ImgRoot = $file.Directory
+                # $ImgRoot = $file.Directory
                 # $OutputPath = (Join-Path -Path $out.FullName -ChildPath ($ImgRoot.Parent.Name + $file.Extension))
-                $startDir = Get-Item (Resolve-Path $ScanPath)
-                if ($ImgRoot.Parent.Parent.Name -eq $startDir.Name) {
-                    $indexname = $ImgRoot.Parent.Name + $file.Extension
-                } else {
-                    $indexname = $ImgRoot.Parent.Parent.Name + "-" + $ImgRoot.Parent.Name + $file.Extension
-                }
-                $OutputPath = (Join-Path -Path $out.FullName -ChildPath $indexname)
+                # $startDir = Get-Item (Resolve-Path -LiteralPath $Path)
+                # if ($ImgRoot.Parent.Parent.Name -eq $startDir.Name) {
+                #     $indexname = $ImgRoot.Parent.Name + $file.Extension
+                # } else {
+                #     $indexname = $ImgRoot.Parent.Parent.Name + "-" + $ImgRoot.Parent.Name + $file.Extension
+                # }
+                $indexname = $Image.Name
+                $OutputPath = (Join-Path -Path $out.FullName -ChildPath $Image.Name)
             }
             
             if ($null -ne $OutputPath -and !(Resolve-Path -LiteralPath $OutputPath -ErrorAction Silent)) {
