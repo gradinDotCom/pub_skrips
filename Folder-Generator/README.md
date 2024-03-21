@@ -77,4 +77,5 @@ This follows on the heels of '[unzip-files](https://github.com/gradinDotCom/pub_
 
 `New-ContactSheet.ps1 -ScanPath "c:\Downloads\czepeku"`
 
-![Contact Sheet](https://showntell.z20.web.core.windows.net/images/sheet.png?)
+![File Explorer Contact Sheet](https://showntell.z20.web.core.windows.net/images/sheet.png?)
+✨NEW ![Web Page (works local) Contact Sheet](https://showntell.z20.web.core.windows.net/images/index_html.png?)
